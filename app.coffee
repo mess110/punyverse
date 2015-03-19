@@ -7,42 +7,11 @@ config.fillWindow()
 engine = new Engine3D()
 engine.renderer.setClearColor('black', 1)
 
-class Planet extends BaseModel
-  constructor: (name, distanceFromOrigin, img, glowColorS) ->
-    @mesh = new THREE.Object3D()
-
-    geometry = new (THREE.SphereGeometry)(0.5, 32, 32)
-    texture = THREE.ImageUtils.loadTexture(THREEx.Planets.baseURL + "images/#{img}.jpg")
-    material = new (THREE.MeshPhongMaterial)(
-      map: texture
-      bumpMap: texture
-      bumpScale: 0.05)
-    @planet = new (THREE.Mesh)(geometry, material)
-    @planet.position.x = distanceFromOrigin
-
-    @mesh.add @planet
-
-    glowColor= new THREE.Color(glowColorS)
-    geometry = new (THREE.SphereGeometry)(0.5, 32, 32)
-    geometry = @planet.geometry.clone()
-    material = THREEx.createAtmosphereMaterial()
-    material.uniforms.glowColor.value = glowColor
-    @glow = new (THREE.Mesh)(geometry, material)
-    @glow.scale.multiplyScalar 1.05
-    @planet.add @glow
-
-    @clouds = THREEx.Planets.createEarthCloud()
-    @planet.add @clouds
-
-    @ring = THREEx.Planets.createSaturnRing()
-    @planet.add @ring
-
-  animateClouds: (tpf) ->
-    @clouds.rotation.y += 1/8 * tpf
-
 class Punyverse extends BaseScene
   constructor: ->
     super()
+
+    @loaded = false
 
     light = new (THREE.AmbientLight)(0x888888)
     @scene.add light
@@ -89,13 +58,24 @@ class Punyverse extends BaseScene
     @saturn= new Planet('saturn', 9, 'saturnmap', 'brown')
     @scene.add @saturn.mesh
 
-    THREEx.SpaceShips.loadSpaceFighter01 (object3d) =>
-      # object3d is the loaded spacefighter
-      # now we add it to the scene
-      object3d.position.z = 8
-      @ship = object3d
-      @scene.add object3d
 
+    THREEx.SpaceShips.loadSpaceFighter01 (object3d) =>
+      @ship = new Ship('protoss', object3d)
+      @ship.mesh.position.z = 2
+      @scene.add @ship.mesh
+
+      @controls = new THREE.FlyControls( @ship.mesh )
+      @controls.movementSpeed = 1000
+      @controls.domElement = engine.renderer.domElement
+      @controls.rollSpeed = Math.PI / 6
+      @controls.autoForward = false
+      @controls.dragToLook = false
+
+      engine.camera.position.y = 1
+      engine.camera.position.z = 4
+      @ship.mesh.add engine.camera
+
+      @loaded = true
       return
 
   tick: (tpf) ->
@@ -107,10 +87,22 @@ class Punyverse extends BaseScene
     @venus.mesh.rotation.z += 0.004
     @sun.mesh.rotation.z -= 0.0005
 
+    return if !@loaded
+
+    @controls.movementSpeed = 120.33 * tpf
+    @controls.update( tpf )
+
+    @ship.rightDetonation.visible = @controls.moveVector.z == -1
+    @ship.leftDetonation.visible = @controls.moveVector.z == -1
+    #@ship.mesh.position.x = engine.camera.position.x
+    #@ship.mesh.position.y = engine.camera.position.y - 1
+    #@ship.mesh.position.z = engine.camera.position.z - 3
+
   doMouseEvent: (event, raycaster) ->
+    return if !@loaded
 
   doKeyboardEvent: (event) ->
-    return if event.type != 'keydown'
+    #return if !@loaded
 
     #tween = new (TWEEN.Tween)({x: @ship.position.x}).to({ x: @ship.position.x + 3}, 2000).easing(TWEEN.Easing.Elastic.In)
     #tween.onUpdate(->
@@ -121,6 +113,5 @@ class Punyverse extends BaseScene
 
 punyverse = new Punyverse()
 engine.addScene(punyverse)
-engine.camera.position.z = 12
 
 engine.render()
