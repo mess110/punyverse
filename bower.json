@@ -1,0 +1,22 @@
+{
+  "name": "project",
+  "version": "0.0.0",
+  "authors": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "coffee-engine": "~0.0.21",
+    "threex.skymap": "*"
+  },
+  "dependencies": {
+    "threex.planets": "https://github.com/jeromeetienne/threex.planets/archive/master.zip",
+    "threex.spaceships": "*"
+  }
+}
