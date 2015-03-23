@@ -1,5 +1,6 @@
-THREEx.Planets.baseURL = '/bower_components/threex.planets/'
-THREEx.SpaceShips.baseUrl = '/bower_components/threex.spaceships/'
+THREEx.Planets.baseURL = 'bower_components/threex.planets/'
+THREEx.SpaceShips.baseUrl = 'bower_components/threex.spaceships/'
+THREEx.TextureCube.baseUrl = ""
 
 config = Config.get()
 config.fillWindow()

@@ -1,0 +1,34 @@
+{
+  "name": "coffee-engine",
+  "version": "0.0.24",
+  "authors": [
+    "Cristian Mircea Messel <mess110@gmail.com>"
+  ],
+  "description": "thin layer over three.js in coffeescript",
+  "main": "?",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/mess110/coffee-engine",
+  "devDependencies": {
+    "tweenjs": "r14",
+    "stats.js": "r11",
+    "threejs": "r68",
+    "threex.windowresize": "*",
+    "threex.rendererstats": "*"
+  },
+  "_release": "0.0.24",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.24",
+    "commit": "c3a6ff730a48a74322f4223dada5a49bb102203a"
+  },
+  "_source": "git://github.com/mess110/coffee-engine.git",
+  "_target": "~0.0.24",
+  "_originalSource": "coffee-engine"
+}
