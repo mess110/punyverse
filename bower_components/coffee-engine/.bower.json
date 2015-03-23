@@ -1,6 +1,6 @@
 {
   "name": "coffee-engine",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "authors": [
     "Cristian Mircea Messel <mess110@gmail.com>"
   ],
@@ -22,13 +22,13 @@
     "threex.windowresize": "*",
     "threex.rendererstats": "*"
   },
-  "_release": "0.0.23",
+  "_release": "0.0.24",
   "_resolution": {
     "type": "version",
-    "tag": "0.0.23",
-    "commit": "eb75061f627ada447b0db1b404db5062e6f0dd41"
+    "tag": "0.0.24",
+    "commit": "11b117b1ade6fc114834d596c67ead6e530cda31"
   },
   "_source": "git://github.com/mess110/coffee-engine.git",
-  "_target": "~0.0.23",
+  "_target": "~0.0.24",
   "_originalSource": "coffee-engine"
 }

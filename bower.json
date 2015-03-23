@@ -12,7 +12,7 @@
     "tests"
   ],
   "devDependencies": {
-    "coffee-engine": "~0.0.23",
+    "coffee-engine": "~0.0.24",
     "threex.skymap": "*"
   },
   "dependencies": {

@@ -3,6 +3,7 @@ THREEx.SpaceShips.baseUrl = 'bower_components/threex.spaceships/'
 THREEx.TextureCube.baseUrl = ""
 
 config = Config.get()
+config.preventDefaultMouseEvents = false
 config.fillWindow()
 
 engine = new Engine3D()

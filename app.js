@@ -11,6 +11,8 @@ THREEx.TextureCube.baseUrl = "";
 
 config = Config.get();
 
+config.preventDefaultMouseEvents = false;
+
 config.fillWindow();
 
 engine = new Engine3D();
