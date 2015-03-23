@@ -182,21 +182,13 @@ class Punyverse extends BaseScene
     #return if !@loaded
 
   doKeyboardEvent: (event) ->
-    #return if !@loaded
-    #return if event.type != 'keyup'
+    return if !@loaded
+    return if event.type != 'keyup'
 
-
-    #console.log event.which
-    #if event.which == 87
-      #@ship.acceleration += 1
-
-    #if event.which == 83
-      #@ship.acceleration -= 1
-
-    #if event.which == 32
-      #bullet = @ship.spawnBullet()
-      #@bullets.push bullet
-      #@scene.add bullet
+    if event.which == 32
+      bullet = @ship.spawnBullet()
+      @bullets.push bullet
+      @scene.add bullet
 
     #tween = new (TWEEN.Tween)({x: @ship.position.x}).to({ x: @ship.position.x + 3}, 2000).easing(TWEEN.Easing.Elastic.In)
     #tween.onUpdate(->

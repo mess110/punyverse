@@ -10414,12 +10414,9 @@ Engine3D = function() {
         this.setCamera(camera), this.camera.position.z = 10, this.anaglyphEffect = new THREE.AnaglyphEffect(this.renderer), 
         this.anaglyphEffect.setSize(this.width, this.height), this.anaglyphEffect.setDistanceBetweenGlyphs(this.config.anaglyphDistance), 
         this.projector = new THREE.Projector(), this.sceneManager = SceneManager.get(), 
-        this.renderer.domElement.addEventListener("mouseup", this.onDocumentMouseEvent, !1), 
-        this.renderer.domElement.addEventListener("mousedown", this.onDocumentMouseEvent, !1), 
-        this.renderer.domElement.addEventListener("mousemove", this.onDocumentMouseEvent, !1), 
-        this.renderer.domElement.addEventListener("keydown", this.onDocumentKeyboardEvent, !1), 
-        this.renderer.domElement.addEventListener("keyup", this.onDocumentKeyboardEvent, !1), 
-        this.config.contextMenuDisabled && document.addEventListener("contextmenu", function(e) {
+        document.addEventListener("mouseup", this.onDocumentMouseEvent, !1), document.addEventListener("mousedown", this.onDocumentMouseEvent, !1), 
+        document.addEventListener("mousemove", this.onDocumentMouseEvent, !1), document.addEventListener("keydown", this.onDocumentKeyboardEvent, !1), 
+        document.addEventListener("keyup", this.onDocumentKeyboardEvent, !1), this.config.contextMenuDisabled && document.addEventListener("contextmenu", function(e) {
             return e.preventDefault();
         }, !1), this.statsManager = StatsManager.get(), this.config.showStatsOnLoad && this.statsManager.toggle();
     }

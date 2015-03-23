@@ -167,7 +167,20 @@ Punyverse = (function(_super) {
 
   Punyverse.prototype.doMouseEvent = function(event, raycaster) {};
 
-  Punyverse.prototype.doKeyboardEvent = function(event) {};
+  Punyverse.prototype.doKeyboardEvent = function(event) {
+    var bullet;
+    if (!this.loaded) {
+      return;
+    }
+    if (event.type !== 'keyup') {
+      return;
+    }
+    if (event.which === 32) {
+      bullet = this.ship.spawnBullet();
+      this.bullets.push(bullet);
+      return this.scene.add(bullet);
+    }
+  };
 
   return Punyverse;
 

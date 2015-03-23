@@ -23,11 +23,11 @@ class Engine3D
     @projector = new THREE.Projector()
     @sceneManager = SceneManager.get()
 
-    @renderer.domElement.addEventListener "mouseup", @onDocumentMouseEvent, false
-    @renderer.domElement.addEventListener "mousedown", @onDocumentMouseEvent, false
-    @renderer.domElement.addEventListener "mousemove", @onDocumentMouseEvent, false
-    @renderer.domElement.addEventListener "keydown", @onDocumentKeyboardEvent, false
-    @renderer.domElement.addEventListener "keyup", @onDocumentKeyboardEvent, false
+    document.addEventListener "mouseup", @onDocumentMouseEvent, false
+    document.addEventListener "mousedown", @onDocumentMouseEvent, false
+    document.addEventListener "mousemove", @onDocumentMouseEvent, false
+    document.addEventListener "keydown", @onDocumentKeyboardEvent, false
+    document.addEventListener "keyup", @onDocumentKeyboardEvent, false
 
     if @config.contextMenuDisabled
       document.addEventListener "contextmenu", (e) ->
