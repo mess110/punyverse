@@ -62,7 +62,12 @@ Punyverse = (function(_super) {
     light.shadowDarkness = 0.2;
     light.shadowMapWidth = 1024;
     light.shadowMapHeight = 1024;
-    mesh = THREEx.createSkymap('skybox');
+    mesh = THREEx.createSkymap({
+      cubeW: 1500,
+      cubeH: 1500,
+      cubeD: 1500,
+      textureCube: THREEx.createTextureCube('skybox')
+    });
     this.scene.add(mesh);
     this.earth = new Planet('earth', 10, 0, 'earthmap1k', 'cyan', 0);
     this.scene.add(this.earth.mesh);
@@ -93,6 +98,7 @@ Punyverse = (function(_super) {
         _this.ship.mesh.add(camera1);
         _this.controls = new THREE.OrbitControls(camera1, engine.renderer.domElement);
         _this.controls.noPan = true;
+        _this.controls.maxDistance = 1000;
         _this.controls.noKeys = true;
         _this.gui = new dat.GUI();
         shipCtrl = {

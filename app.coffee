@@ -47,7 +47,12 @@ class Punyverse extends BaseScene
     light.shadowMapWidth = 1024
     light.shadowMapHeight = 1024
 
-    mesh = THREEx.createSkymap('skybox')
+    mesh = THREEx.createSkymap(
+      cubeW: 1500
+      cubeH: 1500
+      cubeD: 1500
+      textureCube: THREEx.createTextureCube('skybox')
+    )
     @scene.add mesh
 
     @earth = new Planet('earth', 10, 0, 'earthmap1k', 'cyan', 0)
@@ -101,6 +106,7 @@ class Punyverse extends BaseScene
 
       @controls = new THREE.OrbitControls( camera1, engine.renderer.domElement )
       @controls.noPan = true
+      @controls.maxDistance = 1000
       @controls.noKeys = true
 
       @gui = new dat.GUI()
