@@ -56,31 +56,35 @@ class Punyverse extends BaseScene
     @scene.add mesh
 
     @earth = new Planet('earth', 10, 0, 'earthmap1k', 'cyan', 0)
+    @earth.clouds.setVisible(true)
     @scene.add @earth.mesh
 
     @moon = new Planet('moon', 3, 25, 'moonmap1k', 'white', 0.001)
-    @moon.mesh.rotation.y = @currentTime * @moon.speed
+    @moon.setDateRotation(@currentTime)
     @scene.add @moon.mesh
 
     @mercury = new Planet('mercury', 0.5, 30, 'mercurymap', 'red', 0.003)
-    @mercury.mesh.rotation.y = @currentTime * @mercury.speed
+    @mercury.setDateRotation(@currentTime)
     @scene.add @mercury.mesh
 
     @venus = new Planet('venus', 0.5, 45, 'venusmap', 'red', 0.004)
-    @venus.mesh.rotation.y = @currentTime * @venus.speed
+    @venus.ring.setVisible(true)
+    @venus.setDateRotation(@currentTime)
     @scene.add @venus.mesh
 
     @sun = new Planet('sun', 40, 100, 'sunmap', 'yellow', 0.0005)
+    @sun.glow.setVisible(true)
     @sun.setDateRotation(@currentTime)
-    #@sun.mesh.rotation.y = @currentTime / (1000 * 60 * 60 * 24 * 365) * @sun.speed
     @scene.add @sun.mesh
 
     @jupiter = new Planet('jupiter', 30, 200, 'jupitermap', 'orange', 0.006)
-    @jupiter.mesh.rotation.y = @currentTime * @jupiter.speed
+    @jupiter.ring.setVisible(true)
+    @jupiter.setDateRotation(@currentTime)
     @scene.add @jupiter.mesh
 
     @saturn= new Planet('saturn', 20, 300, 'saturnmap', 'brown', 0.003)
-    @saturn.mesh.rotation.y = @currentTime * @saturn.speed
+    @saturn.ring.setVisible(true)
+    @saturn.setDateRotation(@currentTime)
     @scene.add @saturn.mesh
 
 
@@ -98,7 +102,6 @@ class Punyverse extends BaseScene
 
     THREEx.SpaceShips.loadSpaceFighter01 (object3d) =>
       @ship = new Ship('protoss', object3d)
-      #@ship.mesh.rotation.x = Math.PI
       @ship.mesh.position.z = 100
       @scene.add @ship.mesh
 

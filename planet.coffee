@@ -1,3 +1,23 @@
+class Cloud extends BaseModel
+  constructor: (radius) ->
+    @mesh = THREEx.Planets.createEarthCloud()
+    @mesh.geometry = new (THREE.SphereGeometry)(radius + 0.1, 32, 32)
+
+class Ring extends BaseModel
+  constructor: (radius) ->
+    @mesh = THREEx.Planets.createSaturnRing()
+    @mesh.geometry = new THREEx.Planets._RingGeometry(1.55 * radius, 1.75 * radius, 64)
+
+class PlanetGlow extends BaseModel
+  constructor: (radius, glowColorS, mesh) ->
+    glowColor= new THREE.Color(glowColorS)
+    geometry = new (THREE.SphereGeometry)(radius, 32, 32)
+    geometry = mesh.geometry.clone()
+    material = THREEx.createAtmosphereMaterial()
+    material.uniforms.glowColor.value = glowColor
+    @mesh = new (THREE.Mesh)(geometry, material)
+    @mesh.scale.multiplyScalar 1.05
+
 class Planet extends BaseModel
   constructor: (name, radius, distanceFromOrigin, img, glowColorS, speed) ->
     @mesh = new THREE.Object3D()
@@ -13,27 +33,22 @@ class Planet extends BaseModel
 
     @mesh.add @planet
 
-    glowColor= new THREE.Color(glowColorS)
-    geometry = new (THREE.SphereGeometry)(radius, 32, 32)
-    geometry = @planet.geometry.clone()
-    material = THREEx.createAtmosphereMaterial()
-    material.uniforms.glowColor.value = glowColor
-    @glow = new (THREE.Mesh)(geometry, material)
-    @glow.scale.multiplyScalar 1.05
-    @planet.add @glow
+    @glow = new PlanetGlow(radius, glowColorS, @planet)
+    @glow.setVisible(false)
+    @planet.add @glow.mesh
 
-    @clouds = THREEx.Planets.createEarthCloud()
-    @clouds.geometry = new (THREE.SphereGeometry)(radius + 0.1, 32, 32)
-    @planet.add @clouds
+    @clouds = new Cloud(radius)
+    @clouds.setVisible(false)
+    @planet.add @clouds.mesh
 
-    @ring = THREEx.Planets.createSaturnRing()
-    @ring.geometry = new THREEx.Planets._RingGeometry(1.55 * radius, 1.75 * radius, 64)
+    @ring = new Ring(radius)
+    @ring.setVisible(false)
+    @planet.add @ring.mesh
 
-    @planet.add @ring
     @speed = speed
 
   setDateRotation: (time) ->
     @mesh.rotation.y = time * @speed / 100
 
   animateClouds: (tpf) ->
-    @clouds.rotation.y += 1/8 * tpf
+    @clouds.mesh.rotation.y += 1/8 * tpf

@@ -70,24 +70,29 @@ Punyverse = (function(_super) {
     });
     this.scene.add(mesh);
     this.earth = new Planet('earth', 10, 0, 'earthmap1k', 'cyan', 0);
+    this.earth.clouds.setVisible(true);
     this.scene.add(this.earth.mesh);
     this.moon = new Planet('moon', 3, 25, 'moonmap1k', 'white', 0.001);
-    this.moon.mesh.rotation.y = this.currentTime * this.moon.speed;
+    this.moon.setDateRotation(this.currentTime);
     this.scene.add(this.moon.mesh);
     this.mercury = new Planet('mercury', 0.5, 30, 'mercurymap', 'red', 0.003);
-    this.mercury.mesh.rotation.y = this.currentTime * this.mercury.speed;
+    this.mercury.setDateRotation(this.currentTime);
     this.scene.add(this.mercury.mesh);
     this.venus = new Planet('venus', 0.5, 45, 'venusmap', 'red', 0.004);
-    this.venus.mesh.rotation.y = this.currentTime * this.venus.speed;
+    this.venus.ring.setVisible(true);
+    this.venus.setDateRotation(this.currentTime);
     this.scene.add(this.venus.mesh);
     this.sun = new Planet('sun', 40, 100, 'sunmap', 'yellow', 0.0005);
+    this.sun.glow.setVisible(true);
     this.sun.setDateRotation(this.currentTime);
     this.scene.add(this.sun.mesh);
     this.jupiter = new Planet('jupiter', 30, 200, 'jupitermap', 'orange', 0.006);
-    this.jupiter.mesh.rotation.y = this.currentTime * this.jupiter.speed;
+    this.jupiter.ring.setVisible(true);
+    this.jupiter.setDateRotation(this.currentTime);
     this.scene.add(this.jupiter.mesh);
     this.saturn = new Planet('saturn', 20, 300, 'saturnmap', 'brown', 0.003);
-    this.saturn.mesh.rotation.y = this.currentTime * this.saturn.speed;
+    this.saturn.ring.setVisible(true);
+    this.saturn.setDateRotation(this.currentTime);
     this.scene.add(this.saturn.mesh);
     THREEx.SpaceShips.loadSpaceFighter01((function(_this) {
       return function(object3d) {
