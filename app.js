@@ -19,6 +19,8 @@ engine = new Engine3D();
 
 engine.renderer.setClearColor('black', 1);
 
+engine.setCursor('images/pointer.png');
+
 camera1 = new THREE.PerspectiveCamera(60, config.width / config.height, 0.1, 10000);
 
 camera1.position.y = 1;
@@ -132,14 +134,16 @@ Punyverse = (function(_super) {
     if (!this.loaded) {
       return;
     }
-    this.flyControls.update(tpf);
-    this.flyControls.movementSpeed = 2000 * tpf * this.timeSpeed;
-    this.flyControls.strafeSpeed = 1000 * tpf * this.timeSpeed;
-    this.flyControls.rollSpeed = Math.PI / 24 * 4 * this.timeSpeed;
-    mv = this.flyControls.moveVector;
-    b = !(mv.x === 0 && mv.y === 0 && mv.z === 0);
-    this.ship.rightDetonation.visible = b;
-    this.ship.leftDetonation.visible = b;
+    if (this.flyControls != null) {
+      this.flyControls.update(tpf);
+      this.flyControls.movementSpeed = 2000 * tpf * this.timeSpeed;
+      this.flyControls.strafeSpeed = 1000 * tpf * this.timeSpeed;
+      this.flyControls.rollSpeed = Math.PI / 24 * 4 * this.timeSpeed;
+      mv = this.flyControls.moveVector;
+      b = !(mv.x === 0 && mv.y === 0 && mv.z === 0);
+      this.ship.rightDetonation.visible = b;
+      this.ship.leftDetonation.visible = b;
+    }
     _ref = this.bullets;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {

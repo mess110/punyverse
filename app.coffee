@@ -8,6 +8,7 @@ config.fillWindow()
 
 engine = new Engine3D()
 engine.renderer.setClearColor('black', 1)
+engine.setCursor('images/pointer.png')
 
 camera1 = new THREE.PerspectiveCamera(60, config.width / config.height, 0.1, 10000)
 camera1.position.y = 1
@@ -137,15 +138,16 @@ class Punyverse extends BaseScene
 
     return if !@loaded
 
-    @flyControls.update(tpf)
-    @flyControls.movementSpeed = 2000 * tpf * @timeSpeed
-    @flyControls.strafeSpeed = 1000 * tpf * @timeSpeed
-    @flyControls.rollSpeed = Math.PI / 24 * 4 * @timeSpeed
+    if @flyControls?
+      @flyControls.update(tpf)
+      @flyControls.movementSpeed = 2000 * tpf * @timeSpeed
+      @flyControls.strafeSpeed = 1000 * tpf * @timeSpeed
+      @flyControls.rollSpeed = Math.PI / 24 * 4 * @timeSpeed
 
-    mv = @flyControls.moveVector
-    b = !(mv.x == 0 and mv.y == 0 and mv.z == 0)
-    @ship.rightDetonation.visible = b # @ship.acceleration > 0
-    @ship.leftDetonation.visible = b # @ship.acceleration > 0
+      mv = @flyControls.moveVector
+      b = !(mv.x == 0 and mv.y == 0 and mv.z == 0)
+      @ship.rightDetonation.visible = b # @ship.acceleration > 0
+      @ship.leftDetonation.visible = b # @ship.acceleration > 0
 
     for bullet in @bullets
       bullet.translateZ(-30 * tpf * @timeSpeed)
