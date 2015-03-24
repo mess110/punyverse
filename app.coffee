@@ -150,7 +150,7 @@ class Punyverse extends BaseScene
       @ship.leftDetonation.visible = b # @ship.acceleration > 0
 
     for bullet in @bullets
-      bullet.translateZ(-30 * tpf * @timeSpeed)
+      bullet.translateZ(-60 * tpf * @timeSpeed)
 
   doMouseEvent: (event, raycaster) ->
     return if !@loaded

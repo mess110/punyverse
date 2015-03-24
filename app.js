@@ -148,7 +148,7 @@ Punyverse = (function(_super) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       bullet = _ref[_i];
-      _results.push(bullet.translateZ(-30 * tpf * this.timeSpeed));
+      _results.push(bullet.translateZ(-60 * tpf * this.timeSpeed));
     }
     return _results;
   };
