@@ -35,6 +35,8 @@ THREE.MOUSE = {
   RIGHT: 2
 };
 
+Math.RADIAN = 57.2957795;
+
 Punyverse = (function(_super) {
   __extends(Punyverse, _super);
 
@@ -42,30 +44,15 @@ Punyverse = (function(_super) {
     var light, mesh;
     Punyverse.__super__.constructor.call(this);
     this.loaded = false;
+    this.universeSize = 1500;
     this.timeSpeed = 1;
     this.currentTime = Date.now();
-    light = new THREE.AmbientLight(0x888888);
+    light = new THREE.AmbientLight(0xFFFFFF);
     this.scene.add(light);
-    this.scene.add(light);
-    light = new THREE.DirectionalLight(0xcccccc, 1);
-    light.position.set(5, 5, 5);
-    this.scene.add(light);
-    light.castShadow = true;
-    light.shadowCameraNear = 0.01;
-    light.shadowCameraFar = 15;
-    light.shadowCameraFov = 45;
-    light.shadowCameraLeft = -1;
-    light.shadowCameraRight = 1;
-    light.shadowCameraTop = 1;
-    light.shadowCameraBottom = -1;
-    light.shadowBias = 0.001;
-    light.shadowDarkness = 0.2;
-    light.shadowMapWidth = 1024;
-    light.shadowMapHeight = 1024;
     mesh = THREEx.createSkymap({
-      cubeW: 1500,
-      cubeH: 1500,
-      cubeD: 1500,
+      cubeW: this.universeSize,
+      cubeH: this.universeSize,
+      cubeD: this.universeSize,
       textureCube: THREEx.createTextureCube('skybox')
     });
     this.scene.add(mesh);
@@ -96,49 +83,26 @@ Punyverse = (function(_super) {
     this.scene.add(this.saturn.mesh);
     THREEx.SpaceShips.loadSpaceFighter01((function(_this) {
       return function(object3d) {
-        var f1, f2, f3, rX, ship, shipCtrl;
+        var f1, f2, f3;
+        _this.pivot = new THREE.Object3D();
         _this.ship = new Ship('protoss', object3d);
         _this.ship.mesh.position.z = 100;
         _this.scene.add(_this.ship.mesh);
-        _this.ship.mesh.add(camera1);
-        _this.controls = new THREE.OrbitControls(camera1, engine.renderer.domElement);
-        _this.controls.noPan = true;
-        _this.controls.maxDistance = 1000;
-        _this.controls.noKeys = true;
+        _this.pivot.add(camera1);
+        _this.ship.mesh.add(_this.pivot);
+        _this.flyControls = new THREE.FlyControls(_this.ship.mesh, engine.renderer.domElement);
+        _this.flyControls.autoForward = false;
+        _this.flyControls.dragToLook = false;
         _this.gui = new dat.GUI();
-        shipCtrl = {
-          rotation: {
-            x: _this.ship.mesh.rotation.x,
-            y: _this.ship.mesh.rotation.y,
-            z: _this.ship.mesh.rotation.z
-          }
-        };
-        f1 = _this.gui.addFolder('Dashboard');
-        f1.add(_this.ship, 'name');
+        f1 = _this.gui.addFolder('Position');
         f1.add(_this.ship.mesh.position, 'x').listen();
         f1.add(_this.ship.mesh.position, 'y').listen();
         f1.add(_this.ship.mesh.position, 'z').listen();
         f1.open();
-        f2 = _this.gui.addFolder('Location');
-        f2.add(_this.ship, 'acceleration', -4, 14);
-        rX = f2.add(shipCtrl.rotation, 'x', -Math.PI * 2, Math.PI * 2);
-        rX.listen();
-        ship = _this.ship;
-        rX.onFinishChange(function(value) {
-          var originalX, tween;
-          originalX = _this.ship.mesh.rotation.x;
-          tween = new TWEEN.Tween({
-            x: originalX
-          }).to({
-            x: value
-          }, 1000).easing(TWEEN.Easing.Cubic.In);
-          tween.onUpdate(function() {
-            return ship.mesh.rotation.x = this.x;
-          }).start();
-          return tween.onComplete(function() {});
-        });
-        f2.add(_this.ship.mesh.rotation, 'y', -Math.PI * 4, Math.PI * 4);
-        f2.add(_this.ship.mesh.rotation, 'z', -Math.PI * 4, Math.PI * 4);
+        f2 = _this.gui.addFolder('Rotation');
+        f2.add(_this.ship.mesh.rotation, 'x').step(0.001).listen();
+        f2.add(_this.ship.mesh.rotation, 'y').step(0.001).listen();
+        f2.add(_this.ship.mesh.rotation, 'z').step(0.001).listen();
         f2.open();
         f3 = _this.gui.addFolder('Time');
         f3.add(_this, 'timeSpeed');
@@ -149,12 +113,12 @@ Punyverse = (function(_super) {
       };
     })(this));
     this.bullets = [];
-    this.axes = new CoffeeAxes(10000000);
+    this.axes = new CoffeeAxes(this.universeSize / 2);
     this.scene.add(this.axes.mesh);
   }
 
   Punyverse.prototype.tick = function(tpf) {
-    var bullet, _i, _len, _ref;
+    var b, bullet, mv, _i, _len, _ref, _results;
     this.tpf = tpf;
     this.realCurrentTime = Date.now();
     this.currentTime += tpf * 1000 * this.timeSpeed;
@@ -168,17 +132,28 @@ Punyverse = (function(_super) {
     if (!this.loaded) {
       return;
     }
-    this.ship.rightDetonation.visible = this.ship.acceleration > 0;
-    this.ship.leftDetonation.visible = this.ship.acceleration > 0;
+    this.flyControls.update(tpf);
+    this.flyControls.movementSpeed = 2000 * tpf * this.timeSpeed;
+    this.flyControls.strafeSpeed = 1000 * tpf * this.timeSpeed;
+    this.flyControls.rollSpeed = Math.PI / 24 * 4 * this.timeSpeed;
+    mv = this.flyControls.moveVector;
+    b = !(mv.x === 0 && mv.y === 0 && mv.z === 0);
+    this.ship.rightDetonation.visible = b;
+    this.ship.leftDetonation.visible = b;
     _ref = this.bullets;
+    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       bullet = _ref[_i];
-      bullet.translateZ(6 * tpf * this.timeSpeed);
+      _results.push(bullet.translateZ(-30 * tpf * this.timeSpeed));
     }
-    return this.ship.mesh.translateZ(this.ship.acceleration * tpf * this.timeSpeed);
+    return _results;
   };
 
-  Punyverse.prototype.doMouseEvent = function(event, raycaster) {};
+  Punyverse.prototype.doMouseEvent = function(event, raycaster) {
+    if (!this.loaded) {
+
+    }
+  };
 
   Punyverse.prototype.doKeyboardEvent = function(event) {
     var bullet;

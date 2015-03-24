@@ -10,17 +10,17 @@ Ship = (function(_super) {
     this.name = name;
     this.mesh = new THREE.Object3D();
     this.ship = model;
-    this.ship.rotation.y = -0.15;
+    this.ship.rotation.y = -0.15 + Math.PI;
     this.fireLeft = true;
     this.acceleration = 0;
     this.mesh.add(this.ship);
     this.leftDetonation = new THREEx.SpaceShips.Detonation;
     this.leftDetonation.position.x = -0.55;
-    this.leftDetonation.position.z = -0.57;
+    this.leftDetonation.position.z = 0.57;
     this.mesh.add(this.leftDetonation);
     this.rightDetonation = new THREEx.SpaceShips.Detonation;
     this.rightDetonation.position.x = 0.55;
-    this.rightDetonation.position.z = -0.57;
+    this.rightDetonation.position.z = 0.57;
     this.mesh.add(this.rightDetonation);
   }
 
@@ -28,7 +28,7 @@ Ship = (function(_super) {
     var a, b, bullet, projectile;
     projectile = new THREEx.SpaceShips.Shoot();
     bullet = new THREE.Object3D();
-    a = this.mesh.position;
+    a = this.mesh.position.clone();
     bullet.position.set(a.x, a.y, a.z);
     if (this.fireLeft) {
       bullet.position.x += 0.2;
@@ -36,7 +36,7 @@ Ship = (function(_super) {
       bullet.position.x -= 0.2;
     }
     this.fireLeft = !this.fireLeft;
-    b = this.mesh.rotation;
+    b = this.mesh.rotation.clone();
     bullet.rotation.set(b.x, b.y, b.z);
     return bullet.add(projectile);
   };

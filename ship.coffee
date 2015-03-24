@@ -5,7 +5,7 @@ class Ship extends BaseModel
     @mesh = new THREE.Object3D()
 
     @ship = model
-    @ship.rotation.y = -0.15  #+ Math.PI
+    @ship.rotation.y = -0.15 + Math.PI
 
     @fireLeft = true
     @acceleration = 0
@@ -14,18 +14,18 @@ class Ship extends BaseModel
 
     @leftDetonation = new (THREEx.SpaceShips.Detonation)
     @leftDetonation.position.x = -0.55
-    @leftDetonation.position.z = -0.57
+    @leftDetonation.position.z = 0.57
     @mesh.add @leftDetonation
 
     @rightDetonation = new (THREEx.SpaceShips.Detonation)
     @rightDetonation.position.x = 0.55
-    @rightDetonation.position.z = -0.57
+    @rightDetonation.position.z = 0.57
     @mesh.add @rightDetonation
 
   spawnBullet: ->
     projectile = new THREEx.SpaceShips.Shoot()
     bullet = new THREE.Object3D()
-    a = @mesh.position
+    a = @mesh.position.clone()
     bullet.position.set a.x, a.y, a.z
     if @fireLeft
       bullet.position.x += 0.2
@@ -33,6 +33,7 @@ class Ship extends BaseModel
       bullet.position.x -= 0.2
     #bullet.position.z += 1
     @fireLeft = !@fireLeft
-    b = @mesh.rotation
+    b = @mesh.rotation.clone()
+    #b.x += Math.PI
     bullet.rotation.set b.x, b.y, b.z
     bullet.add(projectile)

@@ -12,6 +12,7 @@ THREE.FlyControls = function ( object, domElement ) {
 	// API
 
 	this.movementSpeed = 1.0;
+  this.strafeSpeed = 1.0;
 	this.rollSpeed = 0.005;
 
 	this.dragToLook = false;
@@ -111,31 +112,31 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	this.mousedown = function( event ) {
 
-		//if ( this.domElement !== document ) {
+		if ( this.domElement !== document ) {
 
-			//this.domElement.focus();
+			this.domElement.focus();
 
-		//}
+		}
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		//if ( this.dragToLook ) {
+		if ( this.dragToLook ) {
 
-			//this.mouseStatus ++;
+			this.mouseStatus ++;
 
-		//} else {
+		} else {
 
-			//switch ( event.button ) {
+			switch ( event.button ) {
 
-				//case 0: this.moveState.forward = 1; break;
-				//case 2: this.moveState.back = 1; break;
+				case 0: this.moveState.forward = 1; break;
+				case 2: this.moveState.back = 1; break;
 
-			//}
+			}
 
-			//this.updateMovementVector();
+			this.updateMovementVector();
 
-		//}
+		}
 
 	};
 
@@ -187,10 +188,11 @@ THREE.FlyControls = function ( object, domElement ) {
 	this.update = function( delta ) {
 
 		var moveMult = delta * this.movementSpeed;
+    var strafeMult = delta * this.strafeSpeed;
 		var rotMult = delta * this.rollSpeed;
 
-		this.object.translateX( this.moveVector.x * moveMult );
-		this.object.translateY( this.moveVector.y * moveMult );
+		this.object.translateX( this.moveVector.x * strafeMult );
+		this.object.translateY( this.moveVector.y * strafeMult );
 		this.object.translateZ( this.moveVector.z * moveMult );
 
 		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
@@ -220,7 +222,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		this.rotationVector.y = ( -this.moveState.yawRight  + this.moveState.yawLeft );
 		this.rotationVector.z = ( -this.moveState.rollRight + this.moveState.rollLeft );
 
-    //console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+		//console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
 
 	};
 
@@ -254,11 +256,11 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	};
 
-	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+	//this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
-	this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
-	//this.domElement.addEventListener( 'mousedown', bind( this, this.mousedown ), false );
-	//this.domElement.addEventListener( 'mouseup',   bind( this, this.mouseup ), false );
+	//this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
+  //this.domElement.addEventListener( 'mousedown', bind( this, this.mousedown ), false );
+  //this.domElement.addEventListener( 'mouseup',   bind( this, this.mouseup ), false );
 
 	window.addEventListener( 'keydown', bind( this, this.keydown ), false );
 	window.addEventListener( 'keyup',   bind( this, this.keyup ), false );

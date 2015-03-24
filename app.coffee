@@ -18,39 +18,24 @@ engine.setCamera(camera1)
 
 THREE.MOUSE = {LEFT: 0, MIDDLE: 1, RIGHT: 2}
 
+Math.RADIAN = 57.2957795
+
 class Punyverse extends BaseScene
   constructor: ->
     super()
 
     @loaded = false
+    @universeSize = 1500
     @timeSpeed = 1
     @currentTime = Date.now()
 
-    light = new (THREE.AmbientLight)(0x888888)
+    light = new (THREE.AmbientLight)(0xFFFFFF)
     @scene.add light
-
-    @scene.add( light )
-    light = new (THREE.DirectionalLight)(0xcccccc, 1)
-    light.position.set 5, 5, 5
-    @scene.add light
-    light.castShadow = true
-    light.shadowCameraNear = 0.01
-    light.shadowCameraFar = 15
-    light.shadowCameraFov = 45
-    light.shadowCameraLeft = -1
-    light.shadowCameraRight = 1
-    light.shadowCameraTop = 1
-    light.shadowCameraBottom = -1
-    # light.shadowCameraVisible	= true
-    light.shadowBias = 0.001
-    light.shadowDarkness = 0.2
-    light.shadowMapWidth = 1024
-    light.shadowMapHeight = 1024
 
     mesh = THREEx.createSkymap(
-      cubeW: 1500
-      cubeH: 1500
-      cubeD: 1500
+      cubeW: @universeSize
+      cubeH: @universeSize
+      cubeD: @universeSize
       textureCube: THREEx.createTextureCube('skybox')
     )
     @scene.add mesh
@@ -87,63 +72,39 @@ class Punyverse extends BaseScene
     @saturn.setDateRotation(@currentTime)
     @scene.add @saturn.mesh
 
-
-    #geometry = new (THREE.CylinderGeometry)(1, 1, 30, 32, 1, true)
-    #@texture = THREE.ImageUtils.loadTexture('images/skybox/nx.jpg')
-    #@texture.wrapT = THREE.RepeatWrapping
-    #material = new (THREE.MeshLambertMaterial)(
-      #color: 0xFFFFFF
-      #map: @texture)
-    #mesh = new (THREE.Mesh)(geometry, material)
-    #mesh.rotation.x = Math.PI / 2
-    #@scene.add mesh
-
-    #mesh.flipSided = true
-
     THREEx.SpaceShips.loadSpaceFighter01 (object3d) =>
+      @pivot = new THREE.Object3D()
+
       @ship = new Ship('protoss', object3d)
       @ship.mesh.position.z = 100
       @scene.add @ship.mesh
 
-      @ship.mesh.add camera1
+      @pivot.add camera1
+      @ship.mesh.add @pivot
 
-      @controls = new THREE.OrbitControls( camera1, engine.renderer.domElement )
-      @controls.noPan = true
-      @controls.maxDistance = 1000
-      @controls.noKeys = true
+      #@controls = new THREE.OrbitControls( camera1, engine.renderer.domElement )
+      #@controls.noPan = true
+      #@controls.maxDistance = 1000
+      #@controls.noKeys = true
+
+      @flyControls = new THREE.FlyControls(@ship.mesh, engine.renderer.domElement)
+      @flyControls.autoForward = false
+      @flyControls.dragToLook = false
 
       @gui = new dat.GUI()
 
-      shipCtrl =
-        rotation:
-          x: @ship.mesh.rotation.x
-          y: @ship.mesh.rotation.y
-          z: @ship.mesh.rotation.z
-
-      f1 = @gui.addFolder('Dashboard')
-      f1.add(@ship, 'name')
+      f1 = @gui.addFolder('Position')
       f1.add(@ship.mesh.position, 'x').listen()
       f1.add(@ship.mesh.position, 'y').listen()
       f1.add(@ship.mesh.position, 'z').listen()
       f1.open()
 
-      f2 = @gui.addFolder('Location')
-      f2.add(@ship, 'acceleration', -4, 14)
-      rX = f2.add(shipCtrl.rotation, 'x', -Math.PI * 2, Math.PI * 2)
-      rX.listen()
-      ship = @ship
+      f2 = @gui.addFolder('Rotation')
 
-      rX.onFinishChange (value) =>
-        originalX = @ship.mesh.rotation.x
-        tween = new (TWEEN.Tween)({x: originalX}).to({ x: value}, 1000).easing(TWEEN.Easing.Cubic.In)
-        tween.onUpdate(->
-          ship.mesh.rotation.x = @x
-        ).start()
-        tween.onComplete =>
-          return
+      f2.add(@ship.mesh.rotation, 'x').step(0.001).listen()
+      f2.add(@ship.mesh.rotation, 'y').step(0.001).listen()
+      f2.add(@ship.mesh.rotation, 'z').step(0.001).listen()
 
-      f2.add(@ship.mesh.rotation, 'y', -Math.PI * 4, Math.PI * 4)
-      f2.add(@ship.mesh.rotation, 'z', -Math.PI * 4, Math.PI * 4)
       f2.open()
 
       f3 = @gui.addFolder('Time')
@@ -157,15 +118,11 @@ class Punyverse extends BaseScene
       return
     @bullets = []
 
-    @axes = new CoffeeAxes(10000000)
+    @axes = new CoffeeAxes(@universeSize / 2)
     @scene.add( @axes.mesh )
 
 
   tick: (tpf) ->
-    #@texture.offset.y += 0.008
-    #@texture.offset.y %= 1
-    #@texture.needsUpdate = true
-
     @tpf = tpf
     @realCurrentTime = Date.now()
     @currentTime += tpf * 1000 * @timeSpeed
@@ -180,16 +137,21 @@ class Punyverse extends BaseScene
 
     return if !@loaded
 
-    @ship.rightDetonation.visible = @ship.acceleration > 0
-    @ship.leftDetonation.visible = @ship.acceleration > 0
+    @flyControls.update(tpf)
+    @flyControls.movementSpeed = 2000 * tpf * @timeSpeed
+    @flyControls.strafeSpeed = 1000 * tpf * @timeSpeed
+    @flyControls.rollSpeed = Math.PI / 24 * 4 * @timeSpeed
+
+    mv = @flyControls.moveVector
+    b = !(mv.x == 0 and mv.y == 0 and mv.z == 0)
+    @ship.rightDetonation.visible = b # @ship.acceleration > 0
+    @ship.leftDetonation.visible = b # @ship.acceleration > 0
 
     for bullet in @bullets
-      bullet.translateZ(6 * tpf * @timeSpeed)
-
-    @ship.mesh.translateZ(@ship.acceleration * tpf * @timeSpeed)
+      bullet.translateZ(-30 * tpf * @timeSpeed)
 
   doMouseEvent: (event, raycaster) ->
-    #return if !@loaded
+    return if !@loaded
 
   doKeyboardEvent: (event) ->
     return if !@loaded
@@ -204,7 +166,6 @@ class Punyverse extends BaseScene
     #tween.onUpdate(->
       #punyverse.ship.position.x = @x
     #).start()
-
 
 
 punyverse = new Punyverse()
